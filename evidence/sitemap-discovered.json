@@ -1,0 +1,14 @@
+{
+  "url": "https://takihouse.vn/sitemap.xml",
+  "time_utc": "2026-09-05T13:50:18.224619+00:00",
+  "status": 403,
+  "location": null,
+  "content_type": "text/plain; charset=UTF-8",
+  "index_root": "{http://www.sitemaps.org/schemas/sitemap/0.9}sitemapindex",
+  "index_entries": [
+    "https://takihouse.vn/post-sitemap.xml",
+    "https://takihouse.vn/page-sitemap.xml",
+    "https://takihouse.vn/blocks-sitemap.xml",
+    "https://takihouse.vn/featured_item-sitemap.xml"
+  ]
+}
