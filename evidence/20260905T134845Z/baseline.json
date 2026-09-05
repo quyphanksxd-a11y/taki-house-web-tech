@@ -1,0 +1,76 @@
+[
+  {
+    "url": "http://takihouse.vn/",
+    "timestamp_utc": "2026-09-05T13:48:45.058520+00:00",
+    "method": "GET",
+    "environment": "public via Work terminal",
+    "device": "HTTP client; no viewport",
+    "status": 301,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8",
+      "location": "https://takihouse.vn/",
+      "Server": "cloudflare"
+    },
+    "truncated": false,
+    "body_file": "evidence/20260905T134845Z/1.body",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "url": "https://takihouse.vn/",
+    "timestamp_utc": "2026-09-05T13:49:05.664778+00:00",
+    "method": "GET",
+    "environment": "public via Work terminal",
+    "device": "HTTP client; no viewport",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8",
+      "Server": "cloudflare"
+    },
+    "truncated": false,
+    "body_file": "evidence/20260905T134845Z/2.body",
+    "sha256": "e4c83424d4321cd6ae66840f0026409b27d2736d6a422d3c83ccd237b333a869",
+    "canonical": [
+      "https://takihouse.vn/"
+    ],
+    "meta_robots": [
+      {
+        "name": "robots",
+        "content": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"
+      }
+    ]
+  },
+  {
+    "url": "https://takihouse.vn/robots.txt",
+    "timestamp_utc": "2026-09-05T13:49:19.434053+00:00",
+    "method": "GET",
+    "environment": "public via Work terminal",
+    "device": "HTTP client; no viewport",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "max-age=14400",
+      "Server": "cloudflare"
+    },
+    "truncated": false,
+    "body_file": "evidence/20260905T134845Z/3.body",
+    "sha256": "4c2c5a705ad0ecde29d6937eeff5577aa24379d0110cc13e41604347a26b472a",
+    "robots_text": "# As a condition of accessing this website, you agree to abide by the following\n# content signals:\n\n# (a)  If a Content-Signal = yes, you may collect content for the corresponding\n#      use.\n# (b)  If a Content-Signal = no, you may not collect content for the\n#      corresponding use.\n# (c)  If the website operator does not include a Content-Signal for a\n#      corresponding use, the website operator neither grants nor restricts\n#      permission via Content-Signal with respect to the corresponding use.\n\n# The content signals and their meanings are:\n\n# search:   building a search index and providing search results (e.g., returning\n#           hyperlinks and short excerpts from your website's contents). Search does not\n#           include providing AI-generated search summaries.\n# ai-input: inputting content into one or more AI models (e.g., retrieval\n#           augmented generation, grounding, or other real-time taking of content for\n#           generative AI search answers).\n# ai-train: training or fine-tuning AI models.\n# use:      how AI systems may consume the content (immediate, reference, or full).\n\n# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF\n# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT\n# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.\n\n# BEGIN Cloudflare Managed content\n\nUser-agent: *\nContent-Signal: search=yes,ai-train=no,use=reference\nAllow: /\n\nUser-agent: Amazonbot\nDisallow: /\n\nUser-agent: Applebot-Extended\nDisallow: /\n\nUser-agent: Bytespider\nDisallow: /\n\nUser-agent: CCBot\nDisallow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n\nUser-agent: CloudflareBrowserRenderingCrawler\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: meta-externalagent\nDisallow: /\n\n# END Cloudflare Managed Content\n\nUser-agent: *\nAllow: /\nSitemap: https://takihouse.vn/sitemap.xml"
+  },
+  {
+    "url": "https://takihouse.vn/sitemap_index.xml",
+    "timestamp_utc": "2026-09-05T13:49:30.164318+00:00",
+    "method": "GET",
+    "environment": "public via Work terminal",
+    "device": "HTTP client; no viewport",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml; charset=UTF-8",
+      "x-robots-tag": "noindex",
+      "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+      "Server": "cloudflare"
+    },
+    "truncated": false,
+    "body_file": "evidence/20260905T134845Z/4.body",
+    "sha256": "ecb34b84fc7f525aba85b3b9c4b90c07b46be1f92a60bca764224babe99900d9"
+  }
+]
