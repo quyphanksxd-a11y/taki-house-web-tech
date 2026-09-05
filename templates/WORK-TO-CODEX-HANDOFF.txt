@@ -1,0 +1,19 @@
+# Work → Codex Handoff
+
+Use this format when a Website Management role sends a technical task to Codex.
+
+TASK_ID:
+REQUESTER_ROLE:
+BUSINESS_PRIORITY: Emergency / High / Medium / Low
+OBJECTIVE:
+OBSERVED_FACTS:
+EVIDENCE:
+URLS_OR_FILES:
+ENVIRONMENT:
+KNOWN_CONSTRAINTS:
+DO_NOT_TOUCH:
+EXPECTED_TESTS:
+APPROVAL_STATUS:
+
+Codex instruction:
+Verify the evidence independently where possible. Do not assume the requester's hypothesis is correct. Follow AGENTS.md. Do not write to production unless explicit approval is included.
