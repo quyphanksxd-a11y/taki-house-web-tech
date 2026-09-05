@@ -1,0 +1,23 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+wp-config.php
+
+# Runtime / generated
+node_modules/
+vendor/
+.cache/
+tmp/
+logs/
+*.log
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
