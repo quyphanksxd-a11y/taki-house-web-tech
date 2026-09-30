@@ -36,27 +36,10 @@ jobs:
       - name: Apply TAKI HOUSE UI66 patch
         run: |
           python3 android-dashboard/patch_ui66.py
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          p=Path("FYT-Launcher-Mod/app/build.gradle.kts")
-          s=p.read_text()
-          if 'signingConfig = signingConfigs.getByName("release")' not in s:
-              s2, n = re.subn(
-                  r'(\brelease\s*\{)',
-                  r'\1\n            signingConfig = signingConfigs.getByName("release")',
-                  s,
-                  count=1
-              )
-              if n != 1:
-                  raise SystemExit("release block not found")
-              s=s2
-          p.write_text(s)
-          PY
           grep -q "initTakiSpeedOverlay" FYT-Launcher-Mod/app/src/main/java/com/android/launcher66/Launcher.java
           test -s FYT-Launcher-Mod/app/src/main/res/drawable-sw600dp-mdpi/def_bg.webp
 
-      - name: Build signed release
+      - name: Build release APK
         working-directory: FYT-Launcher-Mod
         run: |
           chmod +x gradlew
@@ -67,7 +50,12 @@ jobs:
           mkdir -p dist
           APK="$(find FYT-Launcher-Mod/app/build/outputs/apk/release -type f -name '*.apk' | head -1)"
           test -n "$APK"
-          cp "$APK" dist/190001066_com.android.launcher66.apk
+          ZIPALIGN="$ANDROID_HOME/build-tools/36.0.0/zipalign"
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          "$ZIPALIGN" -f 4 "$APK" dist/launcher66-aligned.apk
+          "$APKSIGNER" sign             --ks FYT-Launcher-Mod/app/keystore.jks             --ks-key-alias android             --ks-pass pass:android             --key-pass pass:android             --out dist/190001066_com.android.launcher66.apk             dist/launcher66-aligned.apk
+          "$APKSIGNER" verify --verbose dist/190001066_com.android.launcher66.apk
+          rm -f dist/launcher66-aligned.apk
           curl -L --fail --retry 3 https://github.com/vasyl91/FYT-Launcher-Mod/releases/download/v1.2.0/installer.zip -o original-installer.zip
           unzip -q original-installer.zip -d package
           cp dist/190001066_com.android.launcher66.apk package/installer/launcher/190001066_com.android.launcher66/190001066_com.android.launcher66.apk
