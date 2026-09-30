@@ -1,0 +1,84 @@
+name: Temporary TAKI UI66 Builder
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android-dashboard/**'
+      - '.github/workflows/taki-ui66-temp-build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 36
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+      - name: Clone Launcher66 v1.2.0
+        run: git clone --depth 1 --branch v1.2.0 https://github.com/vasyl91/FYT-Launcher-Mod.git FYT-Launcher-Mod
+
+      - name: Apply TAKI HOUSE UI66 patch
+        run: |
+          python3 android-dashboard/patch_ui66.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("FYT-Launcher-Mod/app/build.gradle.kts")
+          s=p.read_text()
+          old='''        release {
+            isCrunchPngs = false'''
+          new='''        release {
+            signingConfig = signingConfigs.getByName("release")
+            isCrunchPngs = false'''
+          if 'signingConfig = signingConfigs.getByName("release")' not in s:
+              if old not in s:
+                  raise SystemExit("release block not found")
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          grep -q "initTakiSpeedOverlay" FYT-Launcher-Mod/app/src/main/java/com/android/launcher66/Launcher.java
+          test -s FYT-Launcher-Mod/app/src/main/res/drawable-sw600dp-mdpi/def_bg.webp
+
+      - name: Build signed release
+        working-directory: FYT-Launcher-Mod
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --stacktrace --no-daemon
+
+      - name: Package installer
+        run: |
+          mkdir -p dist
+          APK="$(find FYT-Launcher-Mod/app/build/outputs/apk/release -type f -name '*.apk' | head -1)"
+          test -n "$APK"
+          cp "$APK" dist/190001066_com.android.launcher66.apk
+          curl -L --fail --retry 3 https://github.com/vasyl91/FYT-Launcher-Mod/releases/download/v1.2.0/installer.zip -o original-installer.zip
+          unzip -q original-installer.zip -d package
+          cp dist/190001066_com.android.launcher66.apk package/installer/launcher/190001066_com.android.launcher66/190001066_com.android.launcher66.apk
+          cd package
+          zip -qr ../dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip installer
+          cd ..
+          sha256sum dist/190001066_com.android.launcher66.apk dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip > dist/SHA256.txt
+          ls -lh dist
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: TAKI_UI66_OUTLANDER_v1.0
+          path: |
+            dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip
+            dist/190001066_com.android.launcher66.apk
+            dist/SHA256.txt
+          if-no-files-found: error
