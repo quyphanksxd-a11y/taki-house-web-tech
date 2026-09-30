@@ -38,17 +38,19 @@ jobs:
           python3 android-dashboard/patch_ui66.py
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path("FYT-Launcher-Mod/app/build.gradle.kts")
           s=p.read_text()
-          old='''        release {
-            isCrunchPngs = false'''
-          new='''        release {
-            signingConfig = signingConfigs.getByName("release")
-            isCrunchPngs = false'''
           if 'signingConfig = signingConfigs.getByName("release")' not in s:
-              if old not in s:
+              s2, n = re.subn(
+                  r'(\brelease\s*\{)',
+                  r'\1\n            signingConfig = signingConfigs.getByName("release")',
+                  s,
+                  count=1
+              )
+              if n != 1:
                   raise SystemExit("release block not found")
-              s=s.replace(old,new,1)
+              s=s2
           p.write_text(s)
           PY
           grep -q "initTakiSpeedOverlay" FYT-Launcher-Mod/app/src/main/java/com/android/launcher66/Launcher.java
