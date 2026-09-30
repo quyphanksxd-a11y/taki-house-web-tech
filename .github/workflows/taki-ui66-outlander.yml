@@ -1,0 +1,103 @@
+name: Build TAKI UI66 Outlander
+
+on:
+  push:
+    branches:
+      - taki-ui66-dashboard-build
+    paths:
+      - 'android-dashboard/**'
+      - '.github/workflows/taki-ui66-outlander.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout build workspace
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 36 platform
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "platform-tools"
+
+      - name: Clone Launcher66 v1.2.0
+        run: |
+          git clone --depth 1 --branch v1.2.0 https://github.com/vasyl91/FYT-Launcher-Mod.git FYT-Launcher-Mod
+
+      - name: Apply TAKI HOUSE mod
+        run: |
+          python3 android-dashboard/patch_ui66.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("FYT-Launcher-Mod/app/build.gradle.kts")
+          s=p.read_text()
+          old='''        release {
+            isCrunchPngs = false'''
+          new='''        release {
+            signingConfig = signingConfigs.getByName("release")
+            isCrunchPngs = false'''
+          if 'signingConfig = signingConfigs.getByName("release")' not in s:
+              if old not in s:
+                  raise SystemExit("release block not found")
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+
+      - name: Verify patch inputs
+        run: |
+          test -s FYT-Launcher-Mod/app/src/main/res/drawable-sw600dp-mdpi/def_bg.webp
+          grep -q "TAKI speed" android-dashboard/patch_ui66.py || true
+          grep -q "initTakiSpeedOverlay" FYT-Launcher-Mod/app/src/main/java/com/android/launcher66/Launcher.java
+
+      - name: Build signed release APK
+        working-directory: FYT-Launcher-Mod
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --stacktrace --no-daemon
+
+      - name: Locate APK
+        run: |
+          find FYT-Launcher-Mod/app/build/outputs/apk -type f -name '*.apk' -print
+          APK="$(find FYT-Launcher-Mod/app/build/outputs/apk/release -type f -name '*.apk' | head -1)"
+          test -n "$APK"
+          mkdir -p dist
+          cp "$APK" dist/190001066_com.android.launcher66.apk
+
+      - name: Download original Launcher66 installer
+        run: |
+          curl -L --fail --retry 3             https://github.com/vasyl91/FYT-Launcher-Mod/releases/download/v1.2.0/installer.zip             -o original-installer.zip
+          unzip -q original-installer.zip -d package
+
+      - name: Replace launcher APK only
+        run: |
+          cp dist/190001066_com.android.launcher66.apk             package/installer/launcher/190001066_com.android.launcher66/190001066_com.android.launcher66.apk
+          cd package
+          zip -qr ../dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip installer
+
+      - name: Checksums
+        run: |
+          sha256sum dist/190001066_com.android.launcher66.apk > dist/SHA256.txt
+          sha256sum dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip >> dist/SHA256.txt
+          ls -lh dist
+
+      - name: Upload install package
+        uses: actions/upload-artifact@v4
+        with:
+          name: TAKI_UI66_OUTLANDER_v1.0
+          path: |
+            dist/TAKI_UI66_OUTLANDER_v1.0_INSTALLER.zip
+            dist/190001066_com.android.launcher66.apk
+            dist/SHA256.txt
+          if-no-files-found: error
+          retention-days: 30
